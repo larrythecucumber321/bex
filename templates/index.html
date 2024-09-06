@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}?v=4">
+</head>
+<body class="bg-background-color text-text-color transition-colors duration-200">
+    <header class="bg-primary text-white py-6 mb-12 header-shadow">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="w-12 h-12 mr-4">
+                    <h1 class="text-4xl font-bold text-shadow">DEX</h1>
+                </div>
+                <div class="flex items-center">
+                    <button id="darkModeToggle" class="mr-6 p-2 rounded-full bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors duration-200">
+                        <i data-feather="moon" class="hidden dark:block w-6 h-6"></i>
+                        <i data-feather="sun" class="block dark:hidden w-6 h-6"></i>
+                    </button>
+                    <button id="connectWallet" class="btn bg-white text-primary hover:bg-gray-100 font-bold py-3 px-6 rounded-lg transition-colors duration-200">
+                        <i data-feather="link" class="w-5 h-5 inline-block mr-2"></i>Connect Wallet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 space-y-16">
+        <section id="poolList" class="fade-in">
+            <h2 class="text-3xl font-semibold mb-8 text-secondary text-shadow">Liquidity Pools</h2>
+            <div id="poolsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Pools will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <section id="addLiquidity" class="hidden fade-in">
+            <h2 class="text-3xl font-semibold mb-8 text-secondary text-shadow">Add Liquidity</h2>
+            <form id="addLiquidityForm" class="bg-card-bg shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+                <div class="mb-6">
+                    <label class="block text-text-color text-sm font-bold mb-2" for="poolSelect">
+                        Select Pool
+                    </label>
+                    <select id="poolSelect" class="form-input shadow appearance-none border rounded-lg w-full py-3 px-4 text-text-color leading-tight focus:outline-none focus:ring-2 focus:ring-primary">
+                        <!-- Pool options will be dynamically inserted here -->
+                    </select>
+                </div>
+                <div id="tokenInputs" class="space-y-6">
+                    <!-- Token input fields will be dynamically inserted here -->
+                </div>
+                <div class="flex items-center justify-end mt-8">
+                    <button class="btn bg-secondary hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors duration-200" type="submit">
+                        <i data-feather="plus-circle" class="w-5 h-5 inline-block mr-2"></i>Add Liquidity
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section id="swap" class="fade-in">
+            <h2 class="text-3xl font-semibold mb-8 text-secondary text-shadow">Swap Tokens</h2>
+            <form id="swapForm" class="bg-card-bg shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <label class="block text-text-color text-sm font-bold mb-2" for="fromToken">
+                            From Token
+                        </label>
+                        <select id="fromToken" class="form-input shadow appearance-none border rounded-lg w-full py-3 px-4 text-text-color leading-tight focus:outline-none focus:ring-2 focus:ring-primary">
+                            <!-- Token options will be dynamically inserted here -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-text-color text-sm font-bold mb-2" for="toToken">
+                            To Token
+                        </label>
+                        <select id="toToken" class="form-input shadow appearance-none border rounded-lg w-full py-3 px-4 text-text-color leading-tight focus:outline-none focus:ring-2 focus:ring-primary">
+                            <!-- Token options will be dynamically inserted here -->
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <label class="block text-text-color text-sm font-bold mb-2" for="amount">
+                        Amount
+                    </label>
+                    <input class="form-input shadow appearance-none border rounded-lg w-full py-3 px-4 text-text-color leading-tight focus:outline-none focus:ring-2 focus:ring-primary" id="amount" type="number" placeholder="0.0">
+                </div>
+                <div class="flex items-center justify-end mt-8">
+                    <button class="btn bg-primary hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200" type="submit">
+                        <i data-feather="refresh-cw" class="w-5 h-5 inline-block mr-2"></i>Swap
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <footer class="bg-primary text-white py-6 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 DEX. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/web3Integration.js') }}?v=4"></script>
+    <script src="{{ url_for('static', filename='js/uiController.js') }}?v=4"></script>
+    <script src="{{ url_for('static', filename='js/api.js') }}?v=4"></script>
+    <script>
+        feather.replace();
+    </script>
+    <script src="{{ url_for('static', filename='js/darkMode.js') }}?v=4"></script>
+</body>
+</html>
